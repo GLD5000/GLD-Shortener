@@ -76,7 +76,8 @@ app.get("/api/shorturl/:url", (req, res) => {
     if (err) {
       res.json({ error: err });
     } else if (data) {
-      window.location(data.url);
+      console.log('data:', data);
+      res.redirect(data.url);
     } else {
       res.json({ error: "invalid url" });
     }

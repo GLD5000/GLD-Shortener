@@ -50,9 +50,19 @@ app.get("/", function (req, res) {
 
 // Your first API endpoint
 
+function isValidUrl(string){
+
+  const expression = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
+  return !!string.match(expression);
+
+}
+
 app.post("/api/shorturl/", (req, res) => {
   const input = req.body.url;
-
+  if (!isValidUrl(input)){
+    res.json({ error: "invalid url" });
+    return;
+  }
   const newURL = new ShortUrl({
     url: input,
   });
@@ -68,7 +78,6 @@ app.post("/api/shorturl/", (req, res) => {
       res.status(500).json({ error: "Failed to save URL" });
     });
 
-  // res.json({ url: input });
 });
 app.get("/api/shorturl/:url", (req, res) => {
   const urlId = req.params.url;

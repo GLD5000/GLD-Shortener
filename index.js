@@ -11,23 +11,6 @@ mongoose.connect(process.env.MONGO_URI, {
   useCreateIndex: true,
 });
 
-// const shortUrlSchema = new mongoose.Schema(
-//   {
-//     url: {
-//       type: String,
-//       required: true,
-//     },
-//   },
-//   {
-//     virtuals: {
-//       info: {
-//         get() {
-//           return {url: this.url , id: this._id};
-//         },
-//       },
-//     },
-//   }
-// );
 const shortUrlSchema = new mongoose.Schema({
   url: {
     type: String,

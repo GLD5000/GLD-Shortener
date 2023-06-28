@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useCreateIndex: true
+  useCreateIndex: true,
 });
 
 // const shortUrlSchema = new mongoose.Schema(
@@ -28,14 +28,12 @@ mongoose.connect(process.env.MONGO_URI, {
 //     },
 //   }
 // );
-const shortUrlSchema = new mongoose.Schema(
-  {
-    url: {
-      type: String,
-      required: true,
-    },
-  }
-);
+const shortUrlSchema = new mongoose.Schema({
+  url: {
+    type: String,
+    required: true,
+  },
+});
 
 const ShortUrl = mongoose.model("ShortUrl", shortUrlSchema);
 
@@ -59,12 +57,13 @@ app.post("/api/shorturl/", (req, res) => {
     url: input,
   });
 
-  newURL.save()
-    .then(savedURL => {
+  newURL
+    .save()
+    .then((savedURL) => {
       console.log("URL saved to the database:", savedURL);
-      res.json({ original_url : savedURL.url, short_url : savedURL._id});
+      res.json({ original_url: savedURL.url, short_url: savedURL._id });
     })
-    .catch(error => {
+    .catch((error) => {
       console.error("Error saving URL to the database:", error);
       res.status(500).json({ error: "Failed to save URL" });
     });
@@ -72,7 +71,16 @@ app.post("/api/shorturl/", (req, res) => {
   // res.json({ url: input });
 });
 app.get("/api/shorturl/:url", (req, res) => {
-  res.json({ url: req.params.url });
+  const urlId = req.params.url;
+  ShortUrl.findById(urlId, function (err, data) {
+    if (err) {
+      res.json({ error: err });
+    } else if (data) {
+      window.location(data.url);
+    } else {
+      res.json({ error: "invalid url" });
+    }
+  });
 });
 app.listen(port, function () {
   console.log(`Listening on port ${port}`);
